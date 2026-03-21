@@ -1,0 +1,35 @@
+services:
+  toolbox:
+    build: .
+    image: ghcr.io/jeancsil/agntrick-toolbox:latest
+    container_name: agntrick-toolbox
+    ports:
+      - "${TOOLBOX_PORT:-8080}:8080"
+    environment:
+      - TOOLBOX_TIMEOUT_DEFAULT=${TOOLBOX_TIMEOUT_DEFAULT:-30}
+      - TOOLBOX_SHELL_ENABLED=${TOOLBOX_SHELL_ENABLED:-true}
+      - TOOLBOX_LOG_LEVEL=${TOOLBOX_LOG_LEVEL:-INFO}
+      - TOOLBOX_MAX_OUTPUT_SIZE=${TOOLBOX_MAX_OUTPUT_SIZE:-1048576}
+    volumes:
+      # Mount workspace for file operations
+      - ${TOOLBOX_WORKSPACE:-./workspace}:/workspace:rw
+    restart: unless-stopped
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2G
+        reservations:
+          cpus: "0.5"
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    # Security: run as non-root
+    user: "1000:1000"
+    read_only: true
+    tmpfs:
+      - /tmp:size=100M,mode=1777

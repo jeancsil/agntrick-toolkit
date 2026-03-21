@@ -3,9 +3,6 @@
 import logging
 
 from mcp.server.fastmcp import FastMCP
-from starlette.applications import Starlette
-from starlette.responses import PlainTextResponse
-from starlette.routing import Mount, Route
 
 from .config import settings
 from .tools.data import register_data_tools
@@ -77,24 +74,17 @@ async def list_tools() -> str:
 
 
 def main() -> None:
-    """Start the MCP server."""
+    """Start the MCP server using FastMCP's built-in SSE server."""
     import uvicorn
 
     logger.info(f"Starting agntrick-toolbox on port {settings.toolbox_port}")
     logger.info(f"Workspace: {settings.toolbox_workspace}")
     logger.info(f"Shell fallback enabled: {settings.toolbox_shell_enabled}")
 
-    # Create combined app with health endpoint and MCP SSE
-    app = Starlette(
-        routes=[
-            Route("/health", lambda r: PlainTextResponse("OK")),
-            Route("/", lambda r: PlainTextResponse("agntrick-toolbox MCP server running")),
-            Mount("/sse", app=mcp.sse_app()),
-        ]
-    )
-
+    # Run the SSE app directly using uvicorn
+    # This avoids Starlette Mount routing issues
     uvicorn.run(
-        app,
+        mcp.sse_app(),
         host="0.0.0.0",
         port=settings.toolbox_port,
         log_level=settings.toolbox_log_level.lower(),

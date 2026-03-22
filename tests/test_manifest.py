@@ -1,5 +1,6 @@
 """Tests for tool manifest."""
 
+import pytest
 
 
 class TestToolInfo:
@@ -31,6 +32,31 @@ class TestToolInfo:
         result = tool.model_dump()
         assert result["name"] == "web_search"
         assert result["category"] == "web"
+
+
+class TestManifestEndpoint:
+    """Tests for manifest MCP tool."""
+
+    @pytest.mark.asyncio
+    async def test_list_tools_returns_manifest(self) -> None:
+        """list_tools should return a valid manifest."""
+        from agntrick_toolbox.server import mcp
+
+        tools = mcp._tool_manager._tools
+        list_tools = tools.get("list_tools")
+        assert list_tools is not None
+
+        result = await list_tools.fn()
+        import json
+
+        manifest = json.loads(result)
+
+        assert "tools" in manifest or isinstance(manifest, list)
+        # Should include the new web tools
+        tools_list = manifest if isinstance(manifest, list) else manifest.get("tools", [])
+        tool_names = [t["name"] if isinstance(t, dict) else t for t in tools_list]
+        assert "web_search" in tool_names
+        assert "hacker_news_top" in tool_names
 
 
 class TestToolManifest:

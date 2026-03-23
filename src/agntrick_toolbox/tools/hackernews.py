@@ -47,14 +47,15 @@ def register_hackernews_tools(mcp: FastMCP) -> None:
                 formatted = []
                 for story in stories:
                     title = story.get("title", "No title")
-                    url = story.get("url") or f"https://news.ycombinator.com/item?id={story.get('id')}"
+                    url = (
+                        story.get("url")
+                        or f"https://news.ycombinator.com/item?id={story.get('id')}"
+                    )
                     score = story.get("score", 0)
                     comments = story.get("descendants", 0)
 
                     formatted.append(
-                        f"**{title}**\n"
-                        f"URL: {url}\n"
-                        f"Points: {score} | Comments: {comments}"
+                        f"**{title}**\nURL: {url}\nPoints: {score} | Comments: {comments}"
                     )
 
                 return "\n\n---\n\n".join(formatted)

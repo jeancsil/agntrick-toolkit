@@ -21,7 +21,7 @@ logging.basicConfig(level=getattr(logging, settings.toolbox_log_level))
 logger = logging.getLogger(__name__)
 
 mcp = FastMCP("agntrick-toolbox")
-app = FastAPI(title="agntrick-toolbox")
+app = FastAPI(title="agntrick-toolbox", redirect_slashes=False)
 
 
 # Register all tools by category
@@ -118,23 +118,16 @@ async def get_manifest() -> ToolManifest:
 def main() -> None:
     """Start the MCP server using FastMCP's built-in SSE server with FastAPI."""
     import uvicorn
-    from starlette.applications import Starlette
-    from starlette.routing import Mount, Route
 
     logger.info(f"Starting agntrick-toolbox on port {settings.toolbox_port}")
     logger.info(f"Workspace: {settings.toolbox_workspace}")
     logger.info(f"Shell fallback enabled: {settings.toolbox_shell_enabled}")
 
-    # Create a combined app with FastAPI routes + MCP SSE
-    combined_app = Starlette(
-        routes=[
-            Mount("/sse", app=mcp.sse_app()),
-        ],
-        app=app,
-    )
+    # Mount the SSE app at /sse, FastAPI routes at root
+    app.mount("/sse", mcp.sse_app(), name="sse")
 
     uvicorn.run(
-        combined_app,
+        app,
         host="0.0.0.0",
         port=settings.toolbox_port,
         log_level=settings.toolbox_log_level.lower(),

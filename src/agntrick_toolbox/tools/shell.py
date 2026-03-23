@@ -15,7 +15,7 @@ def register_shell_tool(mcp: FastMCP) -> None:
         return
 
     # Dangerous command patterns (blocklist approach)
-    DANGEROUS_PATTERNS = [
+    dangerous_patterns = [
         # System destruction
         r"\brm\s+-rf\s+/",
         r"\brm\s+-rf\s+/*",
@@ -56,7 +56,7 @@ def register_shell_tool(mcp: FastMCP) -> None:
             Command output or error message
         """
         # Validate command against dangerous patterns
-        for pattern in DANGEROUS_PATTERNS:
+        for pattern in dangerous_patterns:
             if re.search(pattern, command, re.IGNORECASE):
                 return "Error: Command blocked by security policy"
 

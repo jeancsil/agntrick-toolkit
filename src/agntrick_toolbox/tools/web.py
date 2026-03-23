@@ -3,10 +3,9 @@
 import logging
 from typing import Any
 
-from bs4 import BeautifulSoup
+import httpx
 from ddgs import DDGS
 from mcp.server.fastmcp import FastMCP
-import httpx
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +40,10 @@ def register_web_tools(mcp: FastMCP) -> None:
 
         formatted = []
         for r in results:
-            formatted.append(f"**{r.get('title', 'No title')}**\n{r.get('href', '')}\n{r.get('body', '')}")
+            title = r.get("title", "No title")
+            href = r.get("href", "")
+            body = r.get("body", "")
+            formatted.append(f"**{title}**\n{href}\n{body}")
 
         return "\n\n---\n\n".join(formatted)
 

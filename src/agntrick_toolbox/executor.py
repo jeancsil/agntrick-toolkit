@@ -66,7 +66,7 @@ async def run_command(
             truncated=truncated,
         )
 
-    except asyncio.TimeoutError:
+    except TimeoutError:
         return CommandResult(
             success=False,
             stdout="",

@@ -3,9 +3,9 @@
 import logging
 from typing import Any
 
+import httpx
 from bs4 import BeautifulSoup
 from mcp.server.fastmcp import FastMCP
-import httpx
 
 logger = logging.getLogger(__name__)
 

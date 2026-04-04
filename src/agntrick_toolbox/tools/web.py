@@ -7,6 +7,8 @@ import httpx
 from ddgs import DDGS
 from mcp.server.fastmcp import FastMCP
 
+from ..config import settings
+
 logger = logging.getLogger(__name__)
 
 
@@ -58,7 +60,7 @@ def register_web_tools(mcp: FastMCP) -> None:
             timeout: Request timeout in seconds.
 
         Returns:
-            Extracted text content from the page.
+            Extracted text content from the page, truncated if too large.
         """
         jina_url = f"https://r.jina.ai/{url}"
 
@@ -66,7 +68,14 @@ def register_web_tools(mcp: FastMCP) -> None:
             async with httpx.AsyncClient(timeout=timeout) as client:
                 response = await client.get(jina_url)
                 response.raise_for_status()
-                return response.text
+                text = response.text
+
+            max_size = settings.toolbox_web_response_max_size
+            if len(text) > max_size:
+                original_len = len(response.text)
+                text = text[:max_size] + f"\n\n[Response truncated at {max_size} chars. Original size: {original_len} chars]"
+
+            return text
         except httpx.TimeoutException:
             return f"Error: Request timed out after {timeout} seconds."
         except httpx.HTTPStatusError as e:

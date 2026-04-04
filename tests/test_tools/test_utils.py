@@ -120,6 +120,70 @@ class TestCurlFetch:
             assert "Error" in result
 
 
+    @pytest.mark.asyncio
+    async def test_truncates_large_response(self, temp_workspace, monkeypatch):
+        """Should truncate large response body."""
+        import agntrick_toolbox.path_utils as path_utils
+
+        monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
+
+        from agntrick_toolbox.tools.utils import register_utils_tools
+        from mcp.server.fastmcp import FastMCP
+
+        mcp = FastMCP("test")
+        register_utils_tools(mcp)
+
+        large_body = "A" * 25_000
+
+        with patch("agntrick_toolbox.tools.utils.run_command") as mock_run:
+            mock_run.return_value = CommandResult(
+                success=True,
+                stdout=large_body,
+                stderr="",
+                exit_code=0,
+            )
+
+            tools = mcp._tool_manager._tools
+            curl_tool = tools.get("curl_fetch")
+            if curl_tool:
+                result = await curl_tool.fn(url="https://example.com/huge")
+                assert "Response truncated" in result
+                assert len(result) < 25_000
+                # Should contain first part of the original content
+                assert result.startswith("A" * 100)
+
+    @pytest.mark.asyncio
+    async def test_no_truncation_for_file_output(self, temp_workspace, monkeypatch):
+        """Should not truncate when saving to file."""
+        import agntrick_toolbox.path_utils as path_utils
+
+        monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
+
+        from agntrick_toolbox.tools.utils import register_utils_tools
+        from mcp.server.fastmcp import FastMCP
+
+        mcp = FastMCP("test")
+        register_utils_tools(mcp)
+
+        with patch("agntrick_toolbox.tools.utils.run_command") as mock_run:
+            mock_run.return_value = CommandResult(
+                success=True,
+                stdout="",
+                stderr="",
+                exit_code=0,
+            )
+
+            tools = mcp._tool_manager._tools
+            curl_tool = tools.get("curl_fetch")
+            if curl_tool:
+                result = await curl_tool.fn(
+                    url="https://example.com/huge",
+                    output_path="response.html",
+                )
+                assert "Successfully saved" in result
+                assert "truncated" not in result
+
+
 class TestWgetDownload:
     """Tests for wget_download tool."""
 

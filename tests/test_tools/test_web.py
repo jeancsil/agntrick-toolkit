@@ -15,7 +15,11 @@ class TestWebSearch:
 
         mock_results = [
             {"title": "Python Guide", "href": "https://example.com/python", "body": "Learn Python"},
-            {"title": "Python Tutorial", "href": "https://example.com/tutorial", "body": "Best tutorial"},
+            {
+                "title": "Python Tutorial",
+                "href": "https://example.com/tutorial",
+                "body": "Best tutorial",
+            },
         ]
 
         with patch("agntrick_toolbox.tools.web.DDGS") as mock_ddgs:
@@ -125,3 +129,76 @@ class TestWebFetch:
 
         assert "Error" in result
         assert "timed out" in result.lower()
+
+    @pytest.mark.asyncio
+    async def test_web_fetch_truncates_large_response(self) -> None:
+        """web_fetch should truncate responses exceeding the configured max size."""
+        from agntrick_toolbox.tools.web import register_web_tools
+        from mcp.server.fastmcp import FastMCP
+
+        # Create a response larger than default 20_000 chars
+        large_content = "x" * 25_000
+
+        with patch("agntrick_toolbox.tools.web.httpx.AsyncClient") as mock_client_class:
+            mock_response = AsyncMock()
+            mock_response.text = large_content
+            mock_response.raise_for_status = MagicMock()
+
+            mock_client = AsyncMock()
+            mock_client.get = AsyncMock(return_value=mock_response)
+
+            mock_context = AsyncMock()
+            mock_context.__aenter__ = AsyncMock(return_value=mock_client)
+            mock_context.__aexit__ = AsyncMock(return_value=False)
+
+            mock_client_class.return_value = mock_context
+
+            mcp = FastMCP("test")
+            register_web_tools(mcp)
+
+            tools = mcp._tool_manager._tools
+            fetch_tool = tools.get("web_fetch")
+            assert fetch_tool is not None
+
+            result = await fetch_tool.fn(url="https://example.com/huge-page")
+
+        assert "Response truncated" in result
+        assert len(result) < 25_000
+        # Should contain first 20_000 chars of original content
+        assert result.startswith("x" * 100)
+        # The result should be max_size + truncation marker length
+        assert len(result) <= 21_000  # 20_000 + marker text
+
+    @pytest.mark.asyncio
+    async def test_web_fetch_no_truncation_for_small_response(self) -> None:
+        """web_fetch should not truncate small responses."""
+        from agntrick_toolbox.tools.web import register_web_tools
+        from mcp.server.fastmcp import FastMCP
+
+        small_content = "Hello, this is a small page."
+
+        with patch("agntrick_toolbox.tools.web.httpx.AsyncClient") as mock_client_class:
+            mock_response = AsyncMock()
+            mock_response.text = small_content
+            mock_response.raise_for_status = MagicMock()
+
+            mock_client = AsyncMock()
+            mock_client.get = AsyncMock(return_value=mock_response)
+
+            mock_context = AsyncMock()
+            mock_context.__aenter__ = AsyncMock(return_value=mock_client)
+            mock_context.__aexit__ = AsyncMock(return_value=False)
+
+            mock_client_class.return_value = mock_context
+
+            mcp = FastMCP("test")
+            register_web_tools(mcp)
+
+            tools = mcp._tool_manager._tools
+            fetch_tool = tools.get("web_fetch")
+            assert fetch_tool is not None
+
+            result = await fetch_tool.fn(url="https://example.com/small-page")
+
+        assert result == small_content
+        assert "truncated" not in result

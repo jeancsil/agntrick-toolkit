@@ -2,6 +2,7 @@
 
 from mcp.server.fastmcp import FastMCP
 
+from ..config import settings
 from ..executor import run_command
 from ..path_utils import PathValidationError, validate_output_path
 
@@ -60,7 +61,15 @@ def register_utils_tools(mcp: FastMCP) -> None:
 
         if output_path:
             return f"Successfully saved {url} to {output_path}"
-        return result.stdout
+
+        # Truncate response body if too large
+        text = result.stdout
+        max_size = settings.toolbox_web_response_max_size
+        if len(text) > max_size:
+            original_len = len(text)
+            text = text[:max_size] + f"\n\n[Response truncated at {max_size} chars. Original size: {original_len} chars]"
+
+        return text
 
     @mcp.tool()
     async def wget_download(

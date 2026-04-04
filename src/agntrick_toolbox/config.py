@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     toolbox_shell_enabled: bool = True
     toolbox_log_level: str = "INFO"
     toolbox_max_output_size: int = 1048576  # 1MB
+    toolbox_web_response_max_size: int = 20_000  # 20KB cap for web fetch responses
     toolbox_port: int = 8080
     toolbox_workspace: str = "/workspace"
 

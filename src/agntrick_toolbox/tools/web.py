@@ -12,6 +12,49 @@ from ..config import settings
 logger = logging.getLogger(__name__)
 
 
+def _extract_headings(markdown_text: str, max_chars: int = 3_000) -> str:
+    """Extract headings and first paragraph from markdown text.
+
+    Keeps only lines starting with # (headings) and the first
+    non-heading paragraph after each heading. Ideal for news sites.
+    """
+    lines = markdown_text.split("\n")
+    result: list[str] = []
+    paragraph_lines: list[str] = []
+    in_first_paragraph = False
+
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("#"):
+            if paragraph_lines:
+                result.append(" ".join(paragraph_lines))
+                paragraph_lines = []
+            result.append(stripped)
+            in_first_paragraph = True
+        elif in_first_paragraph and stripped:
+            paragraph_lines.append(stripped)
+        elif not stripped:
+            if paragraph_lines:
+                result.append(" ".join(paragraph_lines))
+                paragraph_lines = []
+            in_first_paragraph = False
+
+    if paragraph_lines:
+        result.append(" ".join(paragraph_lines))
+
+    output = "\n\n".join(result)
+    if len(output) > max_chars:
+        output = output[:max_chars] + "\n\n[...truncated]"
+    return output
+
+
+def _is_rss_url(url: str) -> bool:
+    """Check if URL looks like an RSS/Atom feed."""
+    rss_indicators = ["/rss", "/feed", "/atom.xml", ".rss", ".xml"]
+    url_lower = url.lower()
+    return any(indicator in url_lower for indicator in rss_indicators)
+
+
 def register_web_tools(mcp: FastMCP) -> None:
     """Register web search and fetch tools."""
 
@@ -44,13 +87,13 @@ def register_web_tools(mcp: FastMCP) -> None:
         for r in results:
             title = r.get("title", "No title")
             href = r.get("href", "")
-            body = r.get("body", "")
+            body = r.get("body", "")[:300]
             formatted.append(f"**{title}**\n{href}\n{body}")
 
         return "\n\n---\n\n".join(formatted)
 
     @mcp.tool()
-    async def web_fetch(url: str, timeout: int = 30) -> str:
+    async def web_fetch(url: str, timeout: int = 30, mode: str = "article") -> str:
         """Fetch and extract text content from a URL.
 
         Uses Jina Reader API for clean text extraction (free, no API key).
@@ -58,10 +101,17 @@ def register_web_tools(mcp: FastMCP) -> None:
         Args:
             url: The URL to fetch.
             timeout: Request timeout in seconds.
+            mode: Extraction mode.
+                - "article": Full article text (default, max 5000 chars)
+                - "headlines": Extract only headings and first paragraph (max 3000 chars)
 
         Returns:
             Extracted text content from the page, truncated if too large.
         """
+        # Auto-detect RSS feeds and switch to headlines mode
+        if _is_rss_url(url) and mode == "article":
+            mode = "headlines"
+
         jina_url = f"https://r.jina.ai/{url}"
 
         try:
@@ -69,6 +119,9 @@ def register_web_tools(mcp: FastMCP) -> None:
                 response = await client.get(jina_url)
                 response.raise_for_status()
                 text = response.text
+
+            if mode == "headlines":
+                text = _extract_headings(text)
 
             max_size = settings.toolbox_web_response_max_size
             if len(text) > max_size:

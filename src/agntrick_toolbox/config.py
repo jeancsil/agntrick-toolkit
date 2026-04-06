@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     toolbox_shell_enabled: bool = True
     toolbox_log_level: str = "INFO"
     toolbox_max_output_size: int = 1048576  # 1MB
-    toolbox_web_response_max_size: int = 5_000  # ~1.2K tokens, sufficient for most responses
+    toolbox_web_response_max_size: int = 15_000  # ~4K tokens, enough for full articles
     toolbox_port: int = 8080
     toolbox_workspace: str = "/workspace"
 

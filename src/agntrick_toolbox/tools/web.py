@@ -102,7 +102,7 @@ def register_web_tools(mcp: FastMCP) -> None:
             url: The URL to fetch.
             timeout: Request timeout in seconds.
             mode: Extraction mode.
-                - "article": Full article text (default, max 5000 chars)
+                - "article": Full article text (default, max 15000 chars)
                 - "headlines": Extract only headings and first paragraph (max 3000 chars)
 
         Returns:

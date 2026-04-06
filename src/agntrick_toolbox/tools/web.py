@@ -120,6 +120,12 @@ def register_web_tools(mcp: FastMCP) -> None:
                 response.raise_for_status()
                 text = response.text
 
+            if not text or not text.strip():
+                logger.warning(f"web_fetch: Jina returned empty body for {url} (status={response.status_code})")
+                return f"Error: No content returned for {url}. The site may block automated access or require JavaScript rendering."
+
+            logger.info(f"web_fetch: {url} -> {len(text)} chars (status={response.status_code}, mode={mode})")
+
             if mode == "headlines":
                 text = _extract_headings(text)
 

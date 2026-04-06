@@ -170,6 +170,39 @@ class TestWebFetch:
         assert len(result) <= 21_000  # 20_000 + marker text
 
     @pytest.mark.asyncio
+    async def test_web_fetch_returns_error_for_empty_response(self) -> None:
+        """web_fetch should return an error when Jina returns empty content."""
+        from agntrick_toolbox.tools.web import register_web_tools
+        from mcp.server.fastmcp import FastMCP
+
+        with patch("agntrick_toolbox.tools.web.httpx.AsyncClient") as mock_client_class:
+            mock_response = AsyncMock()
+            mock_response.text = ""
+            mock_response.status_code = 200
+            mock_response.raise_for_status = MagicMock()
+
+            mock_client = AsyncMock()
+            mock_client.get = AsyncMock(return_value=mock_response)
+
+            mock_context = AsyncMock()
+            mock_context.__aenter__ = AsyncMock(return_value=mock_client)
+            mock_context.__aexit__ = AsyncMock(return_value=False)
+
+            mock_client_class.return_value = mock_context
+
+            mcp = FastMCP("test")
+            register_web_tools(mcp)
+
+            tools = mcp._tool_manager._tools
+            fetch_tool = tools.get("web_fetch")
+            assert fetch_tool is not None
+
+            result = await fetch_tool.fn(url="https://g1.globo.com")
+
+        assert "Error" in result
+        assert "No content" in result
+
+    @pytest.mark.asyncio
     async def test_web_fetch_no_truncation_for_small_response(self) -> None:
         """web_fetch should not truncate small responses."""
         from agntrick_toolbox.tools.web import register_web_tools

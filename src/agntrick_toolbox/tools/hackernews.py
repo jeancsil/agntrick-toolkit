@@ -4,7 +4,7 @@ import logging
 from typing import Any
 
 import httpx
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup  # type: ignore[import-not-found]
 from mcp.server.fastmcp import FastMCP
 
 logger = logging.getLogger(__name__)

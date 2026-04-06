@@ -1,12 +1,12 @@
 """Tests for path validation utilities."""
 
+
 import pytest
-from pathlib import Path
 
 from agntrick_toolbox.path_utils import (
     PathValidationError,
-    validate_workspace_path,
     validate_output_path,
+    validate_workspace_path,
 )
 
 

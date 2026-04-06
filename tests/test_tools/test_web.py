@@ -1,7 +1,8 @@
 """Tests for web tools."""
 
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import AsyncMock, patch, MagicMock
 
 
 class TestWebSearch:
@@ -10,8 +11,9 @@ class TestWebSearch:
     @pytest.mark.asyncio
     async def test_web_search_returns_formatted_results(self) -> None:
         """web_search should return formatted search results."""
-        from agntrick_toolbox.tools.web import register_web_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.web import register_web_tools
 
         mock_results = [
             {"title": "Python Guide", "href": "https://example.com/python", "body": "Learn Python"},
@@ -45,8 +47,9 @@ class TestWebSearch:
     @pytest.mark.asyncio
     async def test_web_search_no_results_returns_message(self) -> None:
         """web_search should return a message when no results found."""
-        from agntrick_toolbox.tools.web import register_web_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.web import register_web_tools
 
         with patch("agntrick_toolbox.tools.web.DDGS") as mock_ddgs:
             mock_instance = MagicMock()
@@ -73,8 +76,9 @@ class TestWebFetch:
     @pytest.mark.asyncio
     async def test_web_fetch_returns_content(self) -> None:
         """web_fetch should return fetched content."""
-        from agntrick_toolbox.tools.web import register_web_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.web import register_web_tools
 
         with patch("agntrick_toolbox.tools.web.httpx.AsyncClient") as mock_client_class:
             # Mock the response
@@ -108,9 +112,10 @@ class TestWebFetch:
     @pytest.mark.asyncio
     async def test_web_fetch_handles_timeout(self) -> None:
         """web_fetch should handle timeout gracefully."""
-        from agntrick_toolbox.tools.web import register_web_tools
-        from mcp.server.fastmcp import FastMCP
         import httpx
+        from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.web import register_web_tools
 
         with patch("agntrick_toolbox.tools.web.httpx.AsyncClient") as mock_client:
             mock_context = AsyncMock()
@@ -133,8 +138,9 @@ class TestWebFetch:
     @pytest.mark.asyncio
     async def test_web_fetch_truncates_large_response(self) -> None:
         """web_fetch should truncate responses exceeding the configured max size."""
-        from agntrick_toolbox.tools.web import register_web_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.web import register_web_tools
 
         # Create a response larger than default 20_000 chars
         large_content = "x" * 25_000
@@ -172,8 +178,9 @@ class TestWebFetch:
     @pytest.mark.asyncio
     async def test_web_fetch_returns_error_for_empty_response(self) -> None:
         """web_fetch should return an error when Jina returns empty content."""
-        from agntrick_toolbox.tools.web import register_web_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.web import register_web_tools
 
         with patch("agntrick_toolbox.tools.web.httpx.AsyncClient") as mock_client_class:
             mock_response = AsyncMock()
@@ -205,8 +212,9 @@ class TestWebFetch:
     @pytest.mark.asyncio
     async def test_web_fetch_no_truncation_for_small_response(self) -> None:
         """web_fetch should not truncate small responses."""
-        from agntrick_toolbox.tools.web import register_web_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.web import register_web_tools
 
         small_content = "Hello, this is a small page."
 

@@ -1,7 +1,8 @@
 """Tests for git tools."""
 
-import pytest
 from unittest.mock import patch
+
+import pytest
 
 from agntrick_toolbox.executor import CommandResult
 
@@ -16,8 +17,9 @@ class TestGitStatus:
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
 
-        from agntrick_toolbox.tools.git import register_git_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.git import register_git_tools
 
         mcp = FastMCP("test")
         register_git_tools(mcp)
@@ -43,8 +45,9 @@ class TestGitStatus:
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
 
-        from agntrick_toolbox.tools.git import register_git_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.git import register_git_tools
 
         mcp = FastMCP("test")
         register_git_tools(mcp)
@@ -70,8 +73,9 @@ class TestGitStatus:
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
 
-        from agntrick_toolbox.tools.git import register_git_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.git import register_git_tools
 
         mcp = FastMCP("test")
         register_git_tools(mcp)
@@ -93,8 +97,9 @@ class TestGitLog:
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
 
-        from agntrick_toolbox.tools.git import register_git_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.git import register_git_tools
 
         mcp = FastMCP("test")
         register_git_tools(mcp)
@@ -120,8 +125,9 @@ class TestGitLog:
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
 
-        from agntrick_toolbox.tools.git import register_git_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.git import register_git_tools
 
         mcp = FastMCP("test")
         register_git_tools(mcp)
@@ -147,8 +153,9 @@ class TestGitLog:
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
 
-        from agntrick_toolbox.tools.git import register_git_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.git import register_git_tools
 
         mcp = FastMCP("test")
         register_git_tools(mcp)

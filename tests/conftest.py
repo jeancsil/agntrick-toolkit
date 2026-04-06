@@ -1,8 +1,9 @@
 """Pytest fixtures for agntrick-toolbox tests."""
 
-import pytest
 import tempfile
 from pathlib import Path
+
+import pytest
 
 
 @pytest.fixture

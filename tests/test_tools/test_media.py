@@ -1,7 +1,8 @@
 """Tests for media processing tools."""
 
-import pytest
 from unittest.mock import patch
+
+import pytest
 
 from agntrick_toolbox.executor import CommandResult
 
@@ -19,8 +20,9 @@ class TestFfmpegConvert:
         input_file = temp_workspace / "input.mp4"
         input_file.touch()
 
-        from agntrick_toolbox.tools.media import register_media_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.media import register_media_tools
 
         mcp = FastMCP("test")
         register_media_tools(mcp)
@@ -52,8 +54,9 @@ class TestFfmpegConvert:
         input_file = temp_workspace / "input.mp4"
         input_file.touch()
 
-        from agntrick_toolbox.tools.media import register_media_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.media import register_media_tools
 
         mcp = FastMCP("test")
         register_media_tools(mcp)
@@ -83,8 +86,9 @@ class TestFfmpegConvert:
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
 
-        from agntrick_toolbox.tools.media import register_media_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.media import register_media_tools
 
         mcp = FastMCP("test")
         register_media_tools(mcp)
@@ -112,8 +116,9 @@ class TestImagemagickConvert:
         input_file = temp_workspace / "input.png"
         input_file.touch()
 
-        from agntrick_toolbox.tools.media import register_media_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.media import register_media_tools
 
         mcp = FastMCP("test")
         register_media_tools(mcp)
@@ -145,8 +150,9 @@ class TestImagemagickConvert:
         input_file = temp_workspace / "input.png"
         input_file.touch()
 
-        from agntrick_toolbox.tools.media import register_media_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.media import register_media_tools
 
         mcp = FastMCP("test")
         register_media_tools(mcp)
@@ -179,8 +185,9 @@ class TestImagemagickConvert:
         input_file = temp_workspace / "input.png"
         input_file.touch()
 
-        from agntrick_toolbox.tools.media import register_media_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.media import register_media_tools
 
         mcp = FastMCP("test")
         register_media_tools(mcp)

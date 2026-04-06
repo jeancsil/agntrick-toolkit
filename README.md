@@ -1,6 +1,6 @@
 # agntrick-toolbox
 
-A Docker-based MCP server providing a curated CLI tool collection for LLM agents. Single container image with **12 core tools** exposed via MCP protocol, with shell fallback for additional commands.
+A Docker-based MCP server providing a curated CLI tool collection for LLM agents. Single container image with **17 tools** exposed via MCP protocol, with shell fallback for additional commands.
 
 ## Features
 
@@ -63,10 +63,31 @@ TOOLBOX_TIMEOUT_DEFAULT=60 docker-compose up -d
 | `git_status` | Get git repository status |
 | `git_log` | View git commit history |
 
+### Web
+| Tool | Description |
+|------|-------------|
+| `web_search` | Search the web using DuckDuckGo |
+| `web_fetch` | Fetch and extract URL content via Jina Reader API |
+
+### Hacker News
+| Tool | Description |
+|------|-------------|
+| `hacker_news_top` | Get top stories from Hacker News |
+| `hacker_news_item` | Get details of a specific HN item |
+
 ### Fallback
 | Tool | Description |
 |------|-------------|
 | `run_shell` | Execute shell commands for tools not in curated set |
+| `health_check` | Check if the toolbox server is healthy |
+
+## HTTP API
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/health` | GET | Health check (returns `OK`) |
+| `/sse` | GET | MCP SSE endpoint for tool calls |
+| `/api/manifest` | GET | Tool manifest in JSON format |
 
 ## Configuration
 
@@ -79,6 +100,7 @@ Environment variables (set in `.env` or docker-compose):
 | `TOOLBOX_SHELL_ENABLED` | `true` | Enable shell fallback tool |
 | `TOOLBOX_LOG_LEVEL` | `INFO` | Logging verbosity (DEBUG, INFO, WARNING, ERROR) |
 | `TOOLBOX_MAX_OUTPUT_SIZE` | `1048576` | Max output bytes (1MB) |
+| `TOOLBOX_WEB_RESPONSE_MAX_SIZE` | `15000` | Max web fetch response chars |
 | `TOOLBOX_WORKSPACE` | `./workspace` | Local workspace directory |
 
 ## Usage with agntrick

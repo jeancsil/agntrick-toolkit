@@ -1,7 +1,8 @@
 """Tests for search tools."""
 
-import pytest
 from unittest.mock import patch
+
+import pytest
 
 from agntrick_toolbox.executor import CommandResult
 
@@ -16,8 +17,9 @@ class TestRipgrepSearch:
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
 
-        from agntrick_toolbox.tools.search import register_search_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.search import register_search_tools
 
         mcp = FastMCP("test")
         register_search_tools(mcp)
@@ -43,8 +45,9 @@ class TestRipgrepSearch:
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
 
-        from agntrick_toolbox.tools.search import register_search_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.search import register_search_tools
 
         mcp = FastMCP("test")
         register_search_tools(mcp)
@@ -70,8 +73,9 @@ class TestRipgrepSearch:
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
 
-        from agntrick_toolbox.tools.search import register_search_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.search import register_search_tools
 
         mcp = FastMCP("test")
         register_search_tools(mcp)
@@ -101,8 +105,9 @@ class TestRipgrepSearch:
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
 
-        from agntrick_toolbox.tools.search import register_search_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.search import register_search_tools
 
         mcp = FastMCP("test")
         register_search_tools(mcp)
@@ -124,8 +129,9 @@ class TestFdFind:
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
 
-        from agntrick_toolbox.tools.search import register_search_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.search import register_search_tools
 
         mcp = FastMCP("test")
         register_search_tools(mcp)
@@ -151,8 +157,9 @@ class TestFdFind:
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
 
-        from agntrick_toolbox.tools.search import register_search_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.search import register_search_tools
 
         mcp = FastMCP("test")
         register_search_tools(mcp)
@@ -178,8 +185,9 @@ class TestFdFind:
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
 
-        from agntrick_toolbox.tools.search import register_search_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.search import register_search_tools
 
         mcp = FastMCP("test")
         register_search_tools(mcp)

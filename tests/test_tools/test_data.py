@@ -1,7 +1,8 @@
 """Tests for data processing tools."""
 
-import pytest
 from unittest.mock import patch
+
+import pytest
 
 from agntrick_toolbox.executor import CommandResult
 
@@ -19,8 +20,9 @@ class TestJqQuery:
         json_file = temp_workspace / "data.json"
         json_file.write_text('{"name": "test"}')
 
-        from agntrick_toolbox.tools.data import register_data_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.data import register_data_tools
 
         mcp = FastMCP("test")
         register_data_tools(mcp)
@@ -46,8 +48,9 @@ class TestJqQuery:
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
 
-        from agntrick_toolbox.tools.data import register_data_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.data import register_data_tools
 
         mcp = FastMCP("test")
         register_data_tools(mcp)
@@ -73,8 +76,9 @@ class TestJqQuery:
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
 
-        from agntrick_toolbox.tools.data import register_data_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.data import register_data_tools
 
         mcp = FastMCP("test")
         register_data_tools(mcp)
@@ -92,8 +96,9 @@ class TestJqQuery:
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
 
-        from agntrick_toolbox.tools.data import register_data_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.data import register_data_tools
 
         mcp = FastMCP("test")
         register_data_tools(mcp)
@@ -118,8 +123,9 @@ class TestYqQuery:
         yaml_file = temp_workspace / "data.yaml"
         yaml_file.write_text("name: test")
 
-        from agntrick_toolbox.tools.data import register_data_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.data import register_data_tools
 
         mcp = FastMCP("test")
         register_data_tools(mcp)
@@ -145,8 +151,9 @@ class TestYqQuery:
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
 
-        from agntrick_toolbox.tools.data import register_data_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.data import register_data_tools
 
         mcp = FastMCP("test")
         register_data_tools(mcp)

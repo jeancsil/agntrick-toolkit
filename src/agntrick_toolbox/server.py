@@ -119,9 +119,9 @@ def main() -> None:
     """Start the MCP server using FastMCP's built-in SSE server with FastAPI."""
     import uvicorn
     from starlette.applications import Starlette
-    from starlette.routing import Mount
     from starlette.middleware import Middleware
     from starlette.middleware.cors import CORSMiddleware
+    from starlette.routing import Mount
 
     logger.info(f"Starting agntrick-toolbox on port {settings.toolbox_port}")
     logger.info(f"Workspace: {settings.toolbox_workspace}")

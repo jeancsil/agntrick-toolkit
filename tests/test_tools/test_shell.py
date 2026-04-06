@@ -1,7 +1,8 @@
 """Tests for shell fallback tool."""
 
-import pytest
 from unittest.mock import patch
+
+import pytest
 
 from agntrick_toolbox.executor import CommandResult
 
@@ -12,14 +13,15 @@ class TestRunShell:
     @pytest.mark.asyncio
     async def test_executes_command(self, temp_workspace, monkeypatch):
         """Should execute shell command."""
-        import agntrick_toolbox.path_utils as path_utils
         import agntrick_toolbox.config as config_module
+        import agntrick_toolbox.path_utils as path_utils
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
         monkeypatch.setattr(config_module.settings, "toolbox_shell_enabled", True)
 
-        from agntrick_toolbox.tools.shell import register_shell_tool
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.shell import register_shell_tool
 
         mcp = FastMCP("test")
         register_shell_tool(mcp)
@@ -41,14 +43,15 @@ class TestRunShell:
     @pytest.mark.asyncio
     async def test_includes_stderr_in_output(self, temp_workspace, monkeypatch):
         """Should include stderr in output."""
-        import agntrick_toolbox.path_utils as path_utils
         import agntrick_toolbox.config as config_module
+        import agntrick_toolbox.path_utils as path_utils
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
         monkeypatch.setattr(config_module.settings, "toolbox_shell_enabled", True)
 
-        from agntrick_toolbox.tools.shell import register_shell_tool
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.shell import register_shell_tool
 
         mcp = FastMCP("test")
         register_shell_tool(mcp)
@@ -71,14 +74,15 @@ class TestRunShell:
     @pytest.mark.asyncio
     async def test_blocks_dangerous_commands(self, temp_workspace, monkeypatch):
         """Should block dangerous commands."""
-        import agntrick_toolbox.path_utils as path_utils
         import agntrick_toolbox.config as config_module
+        import agntrick_toolbox.path_utils as path_utils
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
         monkeypatch.setattr(config_module.settings, "toolbox_shell_enabled", True)
 
-        from agntrick_toolbox.tools.shell import register_shell_tool
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.shell import register_shell_tool
 
         mcp = FastMCP("test")
         register_shell_tool(mcp)
@@ -97,14 +101,15 @@ class TestRunShell:
     @pytest.mark.asyncio
     async def test_can_be_disabled(self, temp_workspace, monkeypatch):
         """Should be able to disable shell tool."""
-        import agntrick_toolbox.path_utils as path_utils
         import agntrick_toolbox.config as config_module
+        import agntrick_toolbox.path_utils as path_utils
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
         monkeypatch.setattr(config_module.settings, "toolbox_shell_enabled", False)
 
-        from agntrick_toolbox.tools.shell import register_shell_tool
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.shell import register_shell_tool
 
         mcp = FastMCP("test")
         register_shell_tool(mcp)
@@ -117,14 +122,15 @@ class TestRunShell:
     @pytest.mark.asyncio
     async def test_caps_timeout(self, temp_workspace, monkeypatch):
         """Should cap timeout at 300 seconds."""
-        import agntrick_toolbox.path_utils as path_utils
         import agntrick_toolbox.config as config_module
+        import agntrick_toolbox.path_utils as path_utils
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
         monkeypatch.setattr(config_module.settings, "toolbox_shell_enabled", True)
 
-        from agntrick_toolbox.tools.shell import register_shell_tool
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.shell import register_shell_tool
 
         mcp = FastMCP("test")
         register_shell_tool(mcp)

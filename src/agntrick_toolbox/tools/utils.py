@@ -67,7 +67,11 @@ def register_utils_tools(mcp: FastMCP) -> None:
         max_size = settings.toolbox_web_response_max_size
         if len(text) > max_size:
             original_len = len(text)
-            text = text[:max_size] + f"\n\n[Response truncated at {max_size} chars. Original size: {original_len} chars]"
+            text = (
+                text[:max_size]
+                + f"\n\n[Response truncated at {max_size} chars. "
+                + f"Original size: {original_len} chars]"
+            )
 
         return text
 

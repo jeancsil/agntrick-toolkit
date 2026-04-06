@@ -2,7 +2,7 @@
 
 import pytest
 
-from agntrick_toolbox.executor import run_command, CommandResult
+from agntrick_toolbox.executor import run_command
 
 
 class TestRunCommand:

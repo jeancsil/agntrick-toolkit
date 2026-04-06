@@ -4,7 +4,7 @@ import logging
 from typing import Any
 
 import httpx
-from ddgs import DDGS
+from ddgs import DDGS  # type: ignore[import-not-found]
 from mcp.server.fastmcp import FastMCP
 
 from ..config import settings
@@ -121,18 +121,40 @@ def register_web_tools(mcp: FastMCP) -> None:
                 text = response.text
 
             if not text or not text.strip():
-                logger.warning(f"web_fetch: Jina returned empty body for {url} (status={response.status_code})")
-                return f"Error: No content returned for {url}. The site may block automated access or require JavaScript rendering."
+                logger.warning(
+                    f"web_fetch: Jina returned empty body for {url} "
+                    f"(status={response.status_code})"
+                )
+                return (
+                    f"Error: No content returned for {url}. The site may block "
+                    "automated access or require JavaScript rendering."
+                )
 
-            logger.info(f"web_fetch: {url} -> {len(text)} chars (status={response.status_code}, mode={mode})")
+            logger.info(
+                f"web_fetch: {url} -> {len(text)} chars "
+                f"(status={response.status_code}, mode={mode})"
+            )
 
             if mode == "headlines":
+                original_text = text
                 text = _extract_headings(text)
+                # Fallback: if extraction is too lossy (e.g. portal sites with
+                # few markdown headings), use plain truncation instead.
+                if len(text) < 500 and len(original_text) > 2000:
+                    logger.info(
+                        f"web_fetch: headlines mode extracted only {len(text)} chars "
+                        f"from {len(original_text)} — falling back to article truncation"
+                    )
+                    text = original_text
 
             max_size = settings.toolbox_web_response_max_size
             if len(text) > max_size:
                 original_len = len(response.text)
-                text = text[:max_size] + f"\n\n[Response truncated at {max_size} chars. Original size: {original_len} chars]"
+                text = (
+                    text[:max_size]
+                    + f"\n\n[Response truncated at {max_size} chars. "
+                    f"Original size: {original_len} chars]"
+                )
 
             return text
         except httpx.TimeoutException:

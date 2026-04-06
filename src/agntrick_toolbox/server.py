@@ -2,9 +2,11 @@
 
 import logging
 
+from fastapi import FastAPI
 from mcp.server.fastmcp import FastMCP
 
 from .config import settings
+from .manifest import ToolInfo, ToolManifest
 from .tools.data import register_data_tools
 from .tools.document import register_document_tools
 from .tools.git import register_git_tools
@@ -19,6 +21,7 @@ logging.basicConfig(level=getattr(logging, settings.toolbox_log_level))
 logger = logging.getLogger(__name__)
 
 mcp = FastMCP("agntrick-toolbox")
+app = FastAPI(title="agntrick-toolbox")
 
 
 # Register all tools by category
@@ -83,18 +86,63 @@ async def list_tools() -> str:
     return json.dumps(tools, indent=2)
 
 
+@app.get("/manifest")
+async def get_manifest() -> ToolManifest:
+    """Get tool manifest for dynamic prompt generation.
+
+    Returns:
+        ToolManifest with all available tools and their categories.
+    """
+    tools = [
+        ToolInfo(name="pdf_extract_text", category="document", description="Extract PDF text"),
+        ToolInfo(name="pandoc_convert", category="document", description="Convert documents"),
+        ToolInfo(name="jq_query", category="data", description="Query JSON data"),
+        ToolInfo(name="yq_query", category="data", description="Query YAML/JSON/XML"),
+        ToolInfo(name="ffmpeg_convert", category="media", description="Convert A/V files"),
+        ToolInfo(name="imagemagick_convert", category="media", description="Transform images"),
+        ToolInfo(name="curl_fetch", category="utils", description="Fetch via curl"),
+        ToolInfo(name="wget_download", category="utils", description="Download files"),
+        ToolInfo(name="ripgrep_search", category="search", description="Search contents"),
+        ToolInfo(name="fd_find", category="search", description="Find files"),
+        ToolInfo(name="git_status", category="git", description="Get git status"),
+        ToolInfo(name="git_log", category="git", description="View git history"),
+        ToolInfo(name="run_shell", category="shell", description="Run shell (fallback)"),
+        ToolInfo(name="web_search", category="web", description="Search web (DDG)"),
+        ToolInfo(name="web_fetch", category="web", description="Fetch URL content"),
+        ToolInfo(name="hacker_news_top", category="hackernews", description="HN top stories"),
+        ToolInfo(name="hacker_news_item", category="hackernews", description="HN item details"),
+    ]
+    return ToolManifest(tools=tools)
+
+
 def main() -> None:
-    """Start the MCP server using FastMCP's built-in SSE server."""
+    """Start the MCP server using FastMCP's built-in SSE server with FastAPI."""
     import uvicorn
+    from starlette.applications import Starlette
+    from starlette.middleware import Middleware
+    from starlette.middleware.cors import CORSMiddleware
+    from starlette.routing import Mount
 
     logger.info(f"Starting agntrick-toolbox on port {settings.toolbox_port}")
     logger.info(f"Workspace: {settings.toolbox_workspace}")
     logger.info(f"Shell fallback enabled: {settings.toolbox_shell_enabled}")
 
-    # Run the SSE app directly using uvicorn
-    # This avoids Starlette Mount routing issues
+    # Create a combined app with SSE and FastAPI routes
+    # SSE routes are merged directly, FastAPI is mounted to preserve context
+    combined_app = Starlette(
+        middleware=[
+            Middleware(
+                CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"]
+            ),
+        ],
+        routes=[
+            *mcp.sse_app().routes,  # SSE app routes: /sse, /messages
+            Mount("/api", app=app),  # FastAPI routes at /api/manifest, etc.
+        ],
+    )
+
     uvicorn.run(
-        mcp.sse_app(),
+        combined_app,
         host="0.0.0.0",
         port=settings.toolbox_port,
         log_level=settings.toolbox_log_level.lower(),

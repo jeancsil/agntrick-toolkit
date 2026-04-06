@@ -1,8 +1,8 @@
 """Tests for document processing tools."""
 
+from unittest.mock import patch
+
 import pytest
-from pathlib import Path
-from unittest.mock import AsyncMock, patch, MagicMock
 
 from agntrick_toolbox.executor import CommandResult
 
@@ -21,8 +21,9 @@ class TestPdfExtractText:
         pdf_path = temp_workspace / "test.pdf"
         pdf_path.touch()
 
-        from agntrick_toolbox.tools.document import register_document_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.document import register_document_tools
 
         mcp = FastMCP("test")
         register_document_tools(mcp)
@@ -50,8 +51,9 @@ class TestPdfExtractText:
 
         monkeypatch.setattr(path_utils.settings, "toolbox_workspace", str(temp_workspace))
 
-        from agntrick_toolbox.tools.document import register_document_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.document import register_document_tools
 
         mcp = FastMCP("test")
         register_document_tools(mcp)
@@ -78,8 +80,9 @@ class TestPandocConvert:
         input_file = temp_workspace / "test.md"
         input_file.write_text("# Hello")
 
-        from agntrick_toolbox.tools.document import register_document_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.document import register_document_tools
 
         mcp = FastMCP("test")
         register_document_tools(mcp)

@@ -1,7 +1,8 @@
 """Tests for server module."""
 
+from unittest.mock import MagicMock
+
 import pytest
-from unittest.mock import patch, MagicMock
 
 
 class TestServerModule:
@@ -44,6 +45,7 @@ class TestServerModule:
     async def test_list_tools_returns_json(self):
         """list_tools should return JSON."""
         import json
+
         from agntrick_toolbox.server import mcp
         tools = mcp._tool_manager._tools
         list_tool = tools.get("list_tools")
@@ -97,13 +99,13 @@ class TestMainFunction:
 
         # Mock uvicorn before importing main
         import sys
-        from unittest.mock import MagicMock
 
         mock_uvicorn = MagicMock()
         sys.modules["uvicorn"] = mock_uvicorn
 
         # Reimport to get mocked uvicorn
         import importlib
+
         import agntrick_toolbox.server as server_module
 
         importlib.reload(server_module)

@@ -2,7 +2,6 @@
 
 from mcp.server.fastmcp import FastMCP
 
-from ..config import settings
 from ..executor import run_command
 from ..path_utils import PathValidationError, validate_workspace_path
 

@@ -1,7 +1,8 @@
 """Tests for Hacker News tools."""
 
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import AsyncMock, patch, MagicMock
 
 
 class TestHackerNewsTop:
@@ -10,14 +11,33 @@ class TestHackerNewsTop:
     @pytest.mark.asyncio
     async def test_hacker_news_top_returns_stories(self) -> None:
         """hacker_news_top should return formatted top stories."""
-        from agntrick_toolbox.tools.hackernews import register_hackernews_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.hackernews import register_hackernews_tools
 
         mock_story_ids = [1, 2, 3]
         mock_stories = [
-            {"id": 1, "title": "First Story", "url": "https://example.com/1", "score": 100, "descendants": 50},
-            {"id": 2, "title": "Second Story", "url": "https://example.com/2", "score": 80, "descendants": 30},
-            {"id": 3, "title": "Third Story", "url": "https://example.com/3", "score": 60, "descendants": 20},
+            {
+                "id": 1,
+                "title": "First Story",
+                "url": "https://example.com/1",
+                "score": 100,
+                "descendants": 50,
+            },
+            {
+                "id": 2,
+                "title": "Second Story",
+                "url": "https://example.com/2",
+                "score": 80,
+                "descendants": 30,
+            },
+            {
+                "id": 3,
+                "title": "Third Story",
+                "url": "https://example.com/3",
+                "score": 60,
+                "descendants": 20,
+            },
         ]
 
         with patch("agntrick_toolbox.tools.hackernews.httpx.AsyncClient") as mock_client_class:
@@ -58,8 +78,9 @@ class TestHackerNewsTop:
     @pytest.mark.asyncio
     async def test_hacker_news_top_handles_missing_url(self) -> None:
         """hacker_news_top should handle stories without URL (Ask HN)."""
-        from agntrick_toolbox.tools.hackernews import register_hackernews_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.hackernews import register_hackernews_tools
 
         mock_story_ids = [1]
         mock_stories = [
@@ -106,8 +127,9 @@ class TestHackerNewsItem:
     @pytest.mark.asyncio
     async def test_hacker_news_item_returns_details(self) -> None:
         """hacker_news_item should return item details."""
-        from agntrick_toolbox.tools.hackernews import register_hackernews_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.hackernews import register_hackernews_tools
 
         mock_item = {
             "id": 12345,
@@ -151,8 +173,9 @@ class TestHackerNewsItem:
     @pytest.mark.asyncio
     async def test_hacker_news_item_handles_not_found(self) -> None:
         """hacker_news_item should handle missing items."""
-        from agntrick_toolbox.tools.hackernews import register_hackernews_tools
         from mcp.server.fastmcp import FastMCP
+
+        from agntrick_toolbox.tools.hackernews import register_hackernews_tools
 
         with patch("agntrick_toolbox.tools.hackernews.httpx.AsyncClient") as mock_client_class:
             mock_response = AsyncMock()

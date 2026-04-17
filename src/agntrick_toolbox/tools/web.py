@@ -60,7 +60,12 @@ def register_web_tools(mcp: FastMCP) -> None:
 
     @mcp.tool()
     async def web_search(query: str, max_results: int = 5) -> str:
-        """Search the web using DuckDuckGo.
+        """Search the web using DuckDuckGo. Returns titles, URLs, and snippets.
+
+        USE FOR: "news about X", "what is happening in Y", "latest on Z",
+        "who is W", "how does Q work", finding current information.
+        DO NOT USE FOR: reading a specific URL the user shared (use web_fetch),
+        extracting paywalled content (delegate to paywall-remover agent).
 
         Args:
             query: The search query.
@@ -94,9 +99,16 @@ def register_web_tools(mcp: FastMCP) -> None:
 
     @mcp.tool()
     async def web_fetch(url: str, timeout: int = 30, mode: str = "article") -> str:
-        """Fetch and extract text content from a URL.
+        """Fetch and extract readable text from a URL using Jina Reader.
 
-        Uses Jina Reader API for clean text extraction (free, no API key).
+        USE FOR: "read this link", "what does this page say", extracting article
+        text from a specific URL shared by the user.
+        DO NOT USE FOR: searching for information (use web_search), paywalled or
+        blocked sites like globo.com/wsj.com/nyt.com (delegate to paywall-remover
+        agent instead), making raw HTTP API calls (use curl_fetch).
+        NOTE: This uses Jina Reader (no JS rendering). If it returns insufficient
+        content or fails, delegate to the paywall-remover agent which uses
+        Crawl4AI with a headless browser.
 
         Args:
             url: The URL to fetch.

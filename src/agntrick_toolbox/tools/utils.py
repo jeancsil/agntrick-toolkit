@@ -20,7 +20,13 @@ def register_utils_tools(mcp: FastMCP) -> None:
         follow_redirects: bool = True,
         timeout: int = 60,
     ) -> str:
-        """Fetch URLs using curl with HTTP method support.
+        """Raw HTTP client using curl — for API calls and custom HTTP requests.
+
+        USE FOR: calling REST APIs, making POST/PUT/DELETE requests, setting
+        custom headers, downloading files to disk, checking API status codes.
+        DO NOT USE FOR: reading web page content (use web_fetch which extracts
+        clean text), searching for information (use web_search), paywalled sites
+        (delegate to paywall-remover agent).
 
         Args:
             url: URL to fetch
